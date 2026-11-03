@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#eef6ff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a1730" media="(prefers-color-scheme: dark)">
 <title>Hamon</title>
 <meta name="description" content="波紋のように、みんなに届ける。テーブルのQRを誰かが読むと、そのリンクが近くの仲間のスマホへ届くiPhoneアプリ。">
 <meta property="og:title" content="Hamon">
@@ -31,7 +33,8 @@
     }
   }
   * { box-sizing: border-box; margin: 0; }
-  html { background: var(--water); }
+  /* 下に引っぱったときにのぞく色を、背景の下の端と同じにする(白く見えないように) */
+  html { background: var(--shallows); }
   body {
     min-height: 100vh;
     background: linear-gradient(var(--water), var(--shallows));
@@ -139,7 +142,7 @@
         <li><span class="mark" aria-hidden="true">🍽️</span><b>お店の注文</b><span>ひとりが読めば、みんなが自分で注文できます。</span></li>
         <li><span class="mark" aria-hidden="true">📝</span><b>アンケート</b><span>その場の全員に、まとめて届けます。</span></li>
         <li><span class="mark" aria-hidden="true">📄</span><b>資料のリンク</b><span>配られた資料やスライドを、すぐ共有できます。</span></li>
-        <li><span class="mark" aria-hidden="true">🤝</span><b>友だち追加</b><span>LINE や SNS の QR を、その場のみんなに。</span></li>
+        <li><span class="mark" aria-hidden="true">🤝</span><b>連絡先の交換</b><span>LINE や SNS の友だち追加の QR を、その場のみんなに。</span></li>
       </ul>
     </section>
     <div class="screens" role="list">
