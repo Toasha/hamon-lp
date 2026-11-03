@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hamon</title>
+<meta name="description" content="波紋のように、みんなに届ける。テーブルのQRを誰かが読むと、そのリンクが近くの仲間のスマホへ届くiPhoneアプリ。">
+<meta property="og:title" content="Hamon">
+<meta property="og:description" content="波紋のように、みんなに届ける。">
+<meta property="og:image" content="icon.png">
+<link rel="icon" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --water: #eef6ff;
+    --shallows: #d3e8ff;
+    --indigo: #0a3a94;
+    --mist: #5b7ba3;
+    --wave: #1a80ff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --water: #0a1730;
+      --shallows: #0e2346;
+      --indigo: #d6e9ff;
+      --mist: #8eaed6;
+      --wave: #5aaaff;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html { background: var(--water); }
+  body {
+    min-height: 100vh;
+    background: linear-gradient(var(--water), var(--shallows));
+    color: var(--indigo);
+    font-family: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", system-ui, sans-serif;
+    font-weight: 400;
+    overflow-x: hidden;
+  }
+  /* 触れる水面。タップしたところに一滴落ちる */
+  canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+  main {
+    position: relative;
+    min-height: 100vh;
+    display: grid;
+    /* 列の幅を画面の幅に収める。決めないと、一番長い行に合わせて広がってはみ出す */
+    grid-template-columns: minmax(0, 1fr);
+    align-content: center;
+    justify-items: center;
+    gap: 32px;
+    padding: 64px 16px;
+    text-align: center;
+    pointer-events: none; /* 水面に触れられるよう、文字の上でもタップを通す */
+  }
+  /* 中の要素が画面の幅を超えて広がらないようにする(スマホで右が切れないように) */
+  main > * { max-width: 100%; }
+  .icon { width: 104px; height: 104px; border-radius: 23px; box-shadow: 0 14px 44px rgba(26, 128, 255, 0.22); }
+  h1 {
+    font-weight: 700;
+    font-size: clamp(30px, 7.4vw, 52px);
+    line-height: 1.4;
+    letter-spacing: 0.06em;
+  }
+  .lead {
+    width: min(30em, 100%);
+    color: var(--mist);
+    font-size: 16px;
+    line-height: 2;
+    letter-spacing: 0.04em;
+    word-break: auto-phrase;
+  }
+  dl {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 28px;
+    max-width: 680px;
+    margin-top: 12px;
+  }
+  dt { font-weight: 700; font-size: 15px; letter-spacing: 0.06em; margin-bottom: 8px; }
+  dd { color: var(--mist); font-size: 13px; line-height: 1.85; text-wrap: balance; word-break: auto-phrase; }
+  .soon { color: var(--mist); font-size: 14px; letter-spacing: 0.04em; }
+  .hint { color: var(--mist); font-size: 12px; opacity: 0.7; }
+  @media (max-width: 600px) {
+    dl { grid-template-columns: 1fr; gap: 20px; width: min(22em, 100%); }
+  }
+</style>
+</head>
+<body>
+  <canvas id="water" aria-hidden="true"></canvas>
+  <main>
+    <img class="icon" src="icon.png" alt="Hamon">
+    <h1>波紋のように、<br>みんなに届ける。</h1>
+    <p class="lead">テーブルのQRを誰かが読むと、そのリンクが<br>近くの仲間のスマホへ、そっと届きます。</p>
+    <dl>
+      <div><dt>開いておくだけ</dt><dd>いつもの仲間なら、アプリを開いておくだけで同じ部屋に入れます。</dd></div>
+      <div><dt>となり同士で、直接</dt><dd>サーバーを通さず、近くのスマホ同士でやりとりします。</dd></div>
+      <div><dt>12時間で、消える</dt><dd>届いたリンクは12時間で自動で消えます。</dd></div>
+    </dl>
+    <p class="soon">iPhone 向けに、近日公開します。</p>
+    <p class="hint">水面に触れてみてください。</p>
+  </main>
+<script>
+// 水面:落ちた滴ごとの波を「水面の高さ」として足し合わせ、その傾きの明るさで描く(アプリの背景と同じ考え方)
+// 波が重なると、強め合ったり打ち消し合ったりする
+(() => {
+  const canvas = document.getElementById("water");
+  const ctx = canvas.getContext("2d");
+  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
+  const scale = 4;            // 1/4 の解像度で計算して軽くする
+  const lifetime = 4.5;       // 1つの波が消えるまでの秒数
+  const speed = 150;          // 広がる速さ(計算用の画素/秒)
+  const wavelength = 22;
+  const k = 2 * Math.PI / wavelength;
+  let w = 0, h = 0, image, drops = [], running = false;
+
+  function resize() {
+    w = Math.ceil(innerWidth / scale);
+    h = Math.ceil(innerHeight / scale);
+    canvas.width = w; canvas.height = h;
+    image = ctx.createImageData(w, h);
+  }
+
+  function drop(x, y, strength = 1) {
+    if (reduceMotion.matches) return;
+    drops.push({ x: x / scale, y: y / scale, t: performance.now() / 1000, s: strength });
+    if (drops.length > 8) drops.shift();
+    if (!running) { running = true; requestAnimationFrame(frame); }
+  }
+
+  function wave(src, px, py, now) {
+    const age = now - src.t;
+    const dx = px - src.x, dy = py - src.y;
+    const r = Math.hypot(dx, dy) || 0.001;
+    const x = r - speed * age;
+    const width = 14 + age * 10;
+    const envelope = Math.exp(-(x * x) / (width * width));
+    const fade = Math.pow(1 - age / lifetime, 1.6) * src.s;
+    // 高さの r 方向の傾きを、向きつきで返す
+    const slope = -k * Math.sin(k * x) * envelope * fade;
+    return [slope * dx / r, slope * dy / r];
+  }
+
+  function frame() {
+    const now = performance.now() / 1000;
+    drops = drops.filter(d => now - d.t < lifetime);
+    const data = image.data;
+    for (let py = 0; py < h; py++) {
+      for (let px = 0; px < w; px++) {
+        let gx = 0, gy = 0;
+        for (const d of drops) { const g = wave(d, px, py, now); gx += g[0]; gy += g[1]; }
+        // 左上からの光に向いた斜面だけ、ほんのり明るく
+        const lit = Math.max(0, -(gx * 0.55 + gy * 0.8)) * 1.6;
+        const i = (py * w + px) * 4;
+        data[i] = 26; data[i + 1] = 128; data[i + 2] = 255;
+        data[i + 3] = Math.min(255, lit * 255 * 0.32);
+      }
+    }
+    ctx.putImageData(image, 0, 0);
+    if (drops.length) requestAnimationFrame(frame); else { running = false; ctx.clearRect(0, 0, w, h); }
+  }
+
+  resize();
+  addEventListener("resize", resize);
+  addEventListener("pointerdown", e => drop(e.clientX, e.clientY));
+  // 開いたときに一度だけ、真ん中に一滴
+  setTimeout(() => drop(innerWidth / 2, innerHeight * 0.38, 1.2), 500);
+})();
+</script>
+</body>
+</html>
