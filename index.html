@@ -81,6 +81,13 @@
   }
   dt { font-weight: 700; font-size: 15px; letter-spacing: 0.06em; margin-bottom: 8px; }
   dd { color: var(--mist); font-size: 13px; line-height: 1.85; text-wrap: balance; word-break: auto-phrase; }
+  /* 紹介の動画。音なしでくり返す */
+  .promo {
+    width: min(880px, 100%); aspect-ratio: 16 / 9; height: auto;
+    border-radius: 24px; display: block;
+    box-shadow: 0 24px 70px rgba(10, 58, 148, 0.16);
+    background: var(--water);
+  }
   /* 画面:4枚を1列に。狭い画面では横にすべらせて見る */
   .screens {
     display: flex; gap: 20px; justify-content: center;
@@ -111,6 +118,7 @@
     <img class="icon" src="icon.png" alt="Hamon">
     <h1>波紋のように、<br>みんなに届ける。</h1>
     <p class="lead">テーブルのQRを誰かが読むと、そのリンクが<br>近くの仲間のスマホへ、そっと届きます。</p>
+    <video class="promo" src="promo.mp4" poster="promo-poster.jpg" muted loop playsinline preload="metadata" aria-label="Hamon の紹介動画。ひとりが読んだリンクが、波紋のように近くの仲間へ届く"></video>
     <dl>
       <div><dt>開いておくだけ</dt><dd>いつもの仲間なら、アプリを開いておくだけで同じ部屋に入れます。</dd></div>
       <div><dt>となり同士で、直接</dt><dd>サーバーを通さず、近くのスマホ同士でやりとりします。</dd></div>
@@ -188,6 +196,9 @@
   resize();
   addEventListener("resize", resize);
   addEventListener("pointerdown", e => drop(e.clientX, e.clientY));
+  // 紹介の動画は、動きを減らす設定でなければ自動で流す
+  const promo = document.querySelector(".promo");
+  if (promo && !reduceMotion.matches) { promo.autoplay = true; promo.play().catch(() => {}); }
   // 開いたときに一度だけ、真ん中に一滴
   setTimeout(() => drop(innerWidth / 2, innerHeight * 0.38, 1.2), 500);
 })();
