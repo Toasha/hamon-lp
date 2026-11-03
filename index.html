@@ -81,6 +81,23 @@
   }
   dt { font-weight: 700; font-size: 15px; letter-spacing: 0.06em; margin-bottom: 8px; }
   dd { color: var(--mist); font-size: 13px; line-height: 1.85; text-wrap: balance; word-break: auto-phrase; }
+  /* 画面:4枚を1列に。狭い画面では横にすべらせて見る */
+  .screens {
+    display: flex; gap: 20px; justify-content: center;
+    width: 100%; margin-top: 12px;
+    overflow-x: auto; scroll-snap-type: x mandatory;
+    padding: 8px 4px 20px;
+    pointer-events: auto;
+    scrollbar-width: none;
+  }
+  .screens::-webkit-scrollbar { display: none; }
+  .screens figure { flex: 0 0 auto; scroll-snap-align: center; display: grid; gap: 12px; justify-items: center; }
+  .screens img {
+    width: 200px; height: auto; border-radius: 30px;
+    box-shadow: 0 18px 50px rgba(10, 58, 148, 0.16);
+  }
+  .screens figcaption { color: var(--mist); font-size: 13px; }
+  @media (max-width: 900px) { .screens { justify-content: flex-start; } .screens img { width: 180px; } }
   .soon { color: var(--mist); font-size: 14px; letter-spacing: 0.04em; }
   .hint { color: var(--mist); font-size: 12px; opacity: 0.7; }
   @media (max-width: 600px) {
@@ -99,6 +116,12 @@
       <div><dt>となり同士で、直接</dt><dd>サーバーを通さず、近くのスマホ同士でやりとりします。</dd></div>
       <div><dt>12時間で、消える</dt><dd>届いたリンクは12時間で自動で消えます。</dd></div>
     </dl>
+    <div class="screens" role="list">
+      <figure role="listitem"><img src="shots/home.jpg" alt="ホーム画面。部屋を作る、部屋に入るの2つのボタン" loading="lazy"><figcaption>開いて待つ</figcaption></figure>
+      <figure role="listitem"><img src="shots/room.jpg" alt="部屋の画面。パスワードと届いたリンクの一覧" loading="lazy"><figcaption>届いたリンク</figcaption></figure>
+      <figure role="listitem"><img src="shots/join.jpg" alt="部屋に入る画面。8文字のパスワードを入れる" loading="lazy"><figcaption>パスワードでも入れる</figcaption></figure>
+      <figure role="listitem"><img src="shots/history.jpg" alt="履歴の画面。12時間のあいだに届いたリンク" loading="lazy"><figcaption>12時間の履歴</figcaption></figure>
+    </div>
     <p class="soon">iPhone 向けに、近日公開します。</p>
     <p class="hint">水面に触れてみてください。</p>
   </main>
