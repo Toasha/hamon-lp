@@ -88,6 +88,15 @@
     box-shadow: 0 24px 70px rgba(10, 58, 148, 0.16);
     background: var(--water);
   }
+  /* 使いどころ:QRがあるところ。4つを2列に並べる */
+  .uses { width: min(680px, 100%); display: grid; gap: 18px; margin-top: 8px; }
+  .uses h2 { font-size: 20px; font-weight: 700; letter-spacing: 0.06em; }
+  .uses ul { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 32px; text-align: left; }
+  .uses li { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; align-items: baseline; }
+  .uses .mark { font-size: 20px; grid-row: span 2; }
+  .uses b { font-size: 15px; letter-spacing: 0.04em; }
+  .uses span:not(.mark) { color: var(--mist); font-size: 13px; line-height: 1.8; word-break: auto-phrase; text-wrap: balance; }
+  @media (max-width: 600px) { .uses ul { grid-template-columns: 1fr; width: min(22em, 100%); margin: 0 auto; } }
   /* 画面:4枚を1列に。狭い画面では横にすべらせて見る */
   .screens {
     display: flex; gap: 20px; justify-content: center;
@@ -124,6 +133,15 @@
       <div><dt>となり同士で、直接</dt><dd>サーバーを通さず、近くのスマホ同士でやりとりします。</dd></div>
       <div><dt>12時間で、消える</dt><dd>届いたリンクは12時間で自動で消えます。</dd></div>
     </dl>
+    <section class="uses">
+      <h2>こんなQRに</h2>
+      <ul>
+        <li><span class="mark" aria-hidden="true">🍽️</span><b>お店の注文</b><span>ひとりが読めば、みんなが自分で注文できます。</span></li>
+        <li><span class="mark" aria-hidden="true">📝</span><b>アンケート</b><span>その場の全員に、まとめて届けます。</span></li>
+        <li><span class="mark" aria-hidden="true">📄</span><b>資料のリンク</b><span>配られた資料やスライドを、すぐ共有できます。</span></li>
+        <li><span class="mark" aria-hidden="true">🤝</span><b>友だち追加</b><span>LINE や SNS の QR を、その場のみんなに。</span></li>
+      </ul>
+    </section>
     <div class="screens" role="list">
       <figure role="listitem"><img src="shots/home.jpg" alt="ホーム画面。部屋を作る、部屋に入るの2つのボタン" loading="lazy"><figcaption>開いて待つ</figcaption></figure>
       <figure role="listitem"><img src="shots/room.jpg" alt="部屋の画面。パスワードと届いたリンクの一覧" loading="lazy"><figcaption>届いたリンク</figcaption></figure>
