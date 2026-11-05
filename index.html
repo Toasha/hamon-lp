@@ -6,9 +6,9 @@
 <meta name="theme-color" content="#eef6ff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0a1730" media="(prefers-color-scheme: dark)">
 <title>Hamon</title>
-<meta name="description" content="波紋のように、みんなに届ける。テーブルのQRを誰かが読むと、そのリンクが近くの仲間のスマホへ届くiPhoneアプリ。">
+<meta name="description" content="波紋のように、みんなに届ける。テーブルのQRコードを誰かが読むと、そのリンクが近くの仲間のスマホへ届くiPhoneアプリ。">
 <meta property="og:title" content="Hamon">
-<meta property="og:description" content="波紋のように、みんなに届ける。">
+<meta property="og:description" content="波紋のように、みんなに届ける">
 <meta property="og:image" content="icon.png">
 <link rel="icon" href="icon.png">
 <link rel="apple-touch-icon" href="icon.png">
@@ -33,11 +33,10 @@
     }
   }
   * { box-sizing: border-box; margin: 0; }
-  /* 下に引っぱったときにのぞく色を、背景の下の端と同じにする(白く見えないように) */
-  html { background: var(--shallows); }
+  /* 背景は1色だけにする。グラデーションだと、上下に引っぱったときに端の色がずれて見える */
+  html, body { background: var(--water); }
   body {
     min-height: 100vh;
-    background: linear-gradient(var(--water), var(--shallows));
     color: var(--indigo);
     font-family: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", system-ui, sans-serif;
     font-weight: 400;
@@ -99,59 +98,65 @@
   .uses b { font-size: 15px; letter-spacing: 0.04em; }
   .uses span { color: var(--mist); font-size: 13px; line-height: 1.8; word-break: auto-phrase; text-wrap: balance; }
   @media (max-width: 600px) { .uses ul { grid-template-columns: 1fr; width: min(22em, 100%); margin: 0 auto; } }
-  /* 画面:4枚を1列に。狭い画面では横にすべらせて見る */
-  .screens {
+  /* 画面:4枚を1列に。狭い画面では横にすべらせて見る
+     横にすべらせる入れ物は影を切り取るので、画面の端まで広げ、影が収まる余白をとる(切れ目が枠に見えないように) */
+  main > .screens {
     display: flex; gap: 20px; justify-content: center;
-    width: 100%; margin-top: 12px;
+    width: calc(100% + 32px); max-width: none; margin: 0 -16px;
     overflow-x: auto; scroll-snap-type: x mandatory;
-    padding: 8px 4px 20px;
+    padding: 12px 16px 48px; scroll-padding: 0 16px;
     pointer-events: auto;
     scrollbar-width: none;
   }
   .screens::-webkit-scrollbar { display: none; }
-  .screens figure { flex: 0 0 auto; scroll-snap-align: center; display: grid; gap: 12px; justify-items: center; }
+  .screens figure { flex: 0 0 auto; scroll-snap-align: start; display: grid; gap: 12px; justify-items: center; }
   .screens img {
     width: 200px; height: auto; border-radius: 30px;
-    box-shadow: 0 18px 50px rgba(10, 58, 148, 0.16);
+    box-shadow: 0 12px 28px rgba(10, 58, 148, 0.14);
   }
   .screens figcaption { color: var(--mist); font-size: 13px; }
-  @media (max-width: 900px) { .screens { justify-content: flex-start; } .screens img { width: 180px; } }
+  @media (max-width: 900px) { main > .screens { justify-content: flex-start; } .screens img { width: 180px; } }
   .soon { color: var(--mist); font-size: 14px; letter-spacing: 0.04em; }
   .hint { color: var(--mist); font-size: 12px; opacity: 0.7; }
   @media (max-width: 600px) {
     dl { grid-template-columns: 1fr; gap: 20px; width: min(22em, 100%); }
   }
+  /* 開いたとき・見えてきたときに、文字がふっと浮かび上がる(紹介動画と同じ動き) */
+  .js main > * { opacity: 0; translate: 0 18px; transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), translate 0.9s cubic-bezier(0.16, 1, 0.3, 1); transition-delay: var(--delay, 0s); }
+  .js main > .shown { opacity: 1; translate: 0 0; }
+  @media (prefers-reduced-motion: reduce) { .js main > * { opacity: 1; translate: none; transition: none; } }
 </style>
 </head>
 <body>
+  <script>document.body.classList.add("js")</script>
   <canvas id="water" aria-hidden="true"></canvas>
   <main>
     <img class="icon" src="icon.png" alt="Hamon">
-    <h1>波紋のように、<br>みんなに届ける。</h1>
-    <p class="lead">テーブルのQRを誰かが読むと、そのリンクが<br>近くの仲間のスマホへ、そっと届きます。</p>
+    <h1>波紋のように<br>みんなに届ける</h1>
+    <p class="lead">テーブルのQRコードを誰かが読むと<br>そのリンクが近くの仲間のスマホへそっと届きます。</p>
     <video class="promo" src="promo.mp4" poster="promo-poster.jpg" muted loop playsinline preload="metadata" aria-label="Hamon の紹介動画。ひとりが読んだリンクが、波紋のように近くの仲間へ届く"></video>
     <dl>
       <div><dt>開いておくだけ</dt><dd>いつもの仲間なら、アプリを開いておくだけで同じ部屋に入れます。</dd></div>
-      <div><dt>となり同士で、直接</dt><dd>サーバーを通さず、近くのスマホ同士でやりとりします。</dd></div>
-      <div><dt>12時間で、消える</dt><dd>届いたリンクは12時間で自動で消えます。</dd></div>
+      <div><dt>となり同士で直接</dt><dd>サーバーを通さず、近くのスマホ同士でやりとりします。</dd></div>
+      <div><dt>12時間で消える</dt><dd>届いたリンクは12時間で自動で消えます。</dd></div>
     </dl>
     <section class="uses">
-      <h2>こんなQRに</h2>
+      <h2>こんなQRコードに</h2>
       <ul>
         <li><b>お店の注文</b><span>ひとりが読めば、みんなが自分で注文できます。</span></li>
         <li><b>アンケート</b><span>その場の全員に、まとめて届けます。</span></li>
         <li><b>資料のリンク</b><span>配られた資料やスライドを、すぐ共有できます。</span></li>
-        <li><b>連絡先の交換</b><span>LINE や SNS の友だち追加の QR を、その場のみんなに。</span></li>
+        <li><b>連絡先の交換</b><span>SNSの友だち追加のQRコードを、その場のみんなに。</span></li>
       </ul>
     </section>
     <div class="screens" role="list">
-      <figure role="listitem"><img src="shots/home.jpg" alt="ホーム画面。部屋を作る、部屋に入るの2つのボタン" loading="lazy"><figcaption>開いて待つ</figcaption></figure>
-      <figure role="listitem"><img src="shots/room.jpg" alt="部屋の画面。パスワードと届いたリンクの一覧" loading="lazy"><figcaption>届いたリンク</figcaption></figure>
-      <figure role="listitem"><img src="shots/join.jpg" alt="部屋に入る画面。8文字のパスワードを入れる" loading="lazy"><figcaption>パスワードでも入れる</figcaption></figure>
-      <figure role="listitem"><img src="shots/history.jpg" alt="履歴の画面。12時間のあいだに届いたリンク" loading="lazy"><figcaption>12時間の履歴</figcaption></figure>
+      <figure role="listitem"><img src="shots/home.jpg" alt="ホーム画面。部屋を作る、部屋に入るの2つのボタン" width="552" height="1200" loading="lazy"><figcaption>開いて待つ</figcaption></figure>
+      <figure role="listitem"><img src="shots/room.jpg" alt="部屋の画面。パスワードと届いたリンクの一覧" width="552" height="1200" loading="lazy"><figcaption>届いたリンク</figcaption></figure>
+      <figure role="listitem"><img src="shots/join.jpg" alt="部屋に入る画面。8文字のパスワードを入れる" width="552" height="1200" loading="lazy"><figcaption>パスワードでも入れる</figcaption></figure>
+      <figure role="listitem"><img src="shots/history.jpg" alt="履歴の画面。12時間のあいだに届いたリンク" width="552" height="1200" loading="lazy"><figcaption>12時間の履歴</figcaption></figure>
     </div>
-    <p class="soon">iPhone 向けに、近日公開します。</p>
-    <p class="hint">水面に触れてみてください。</p>
+    <p class="soon">iPhone向けに近日公開します</p>
+    <p class="hint">水面に触れてみてください</p>
   </main>
 <script>
 // 水面:落ちた滴ごとの波を「水面の高さ」として足し合わせ、その傾きの明るさで描く(アプリの背景と同じ考え方)
@@ -219,6 +224,22 @@
   // 紹介の動画は、動きを減らす設定でなければ自動で流す
   const promo = document.querySelector(".promo");
   if (promo && !reduceMotion.matches) { promo.autoplay = true; promo.play().catch(() => {}); }
+  // 文字の浮かび上がり:最初に見えているものは上から順に、あとは見えてきたときに
+  const items = [...document.querySelectorAll("main > *")];
+  const show = el => el.classList.add("shown");
+  if (!("IntersectionObserver" in window)) items.forEach(show);
+  else {
+    let order = 0;
+    const io = new IntersectionObserver(entries => {
+      for (const e of entries) {
+        if (!e.isIntersecting) continue;
+        e.target.style.setProperty("--delay", `${Math.min(order++, 4) * 0.12}s`);
+        show(e.target); io.unobserve(e.target);
+      }
+      order = 0;
+    }, { rootMargin: "0px 0px -8% 0px" });
+    items.forEach(el => io.observe(el));
+  }
   // 開いたときに一度だけ、真ん中に一滴
   setTimeout(() => drop(innerWidth / 2, innerHeight * 0.38, 1.2), 500);
 })();
