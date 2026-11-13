@@ -117,6 +117,16 @@
   .screens figcaption { color: var(--mist); font-size: 13px; }
   @media (max-width: 900px) { main > .screens { justify-content: flex-start; } .screens img { width: 180px; } }
   .soon { color: var(--mist); font-size: 14px; letter-spacing: 0.04em; }
+  /* 開発を応援するリンク。目立ちすぎないよう、水面に近い色の小さな丸いボタンにする */
+  main > .tip {
+    pointer-events: auto;
+    display: inline-block; padding: 10px 22px; border-radius: 999px;
+    background: var(--shallows); color: var(--wave);
+    font-size: 14px; font-weight: 500; letter-spacing: 0.06em; text-decoration: none;
+    box-shadow: 0 8px 22px rgba(26, 128, 255, 0.14);
+  }
+  .tip:hover { box-shadow: 0 10px 28px rgba(26, 128, 255, 0.24); }
+  .tip:focus-visible { outline: 2px solid var(--wave); outline-offset: 3px; }
   .hint { color: var(--mist); font-size: 12px; opacity: 0.7; }
   @media (max-width: 600px) {
     dl { grid-template-columns: 1fr; gap: 20px; width: min(22em, 100%); }
@@ -156,6 +166,8 @@
       <figure role="listitem"><img src="shots/history.jpg" alt="履歴の画面。12時間のあいだに届いたリンク" width="552" height="1200" loading="lazy"><figcaption>12時間の履歴</figcaption></figure>
     </div>
     <p class="soon">iPhone向けに近日公開します</p>
+    <!-- チップのURL。Buy Me a Coffee のアカウントができたら、この href だけ差し替える -->
+    <a class="tip" href="https://buymeacoffee.com/" target="_blank" rel="noopener">開発を応援する</a>
     <p class="hint">水面に触れてみてください</p>
   </main>
 <script>
