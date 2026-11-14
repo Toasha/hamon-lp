@@ -15,13 +15,25 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="preload" href="fonts/HanazomeFont.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+  /* はなぞめフォント(Asterism / さつやこ https://www.asterism-m.com/font/)
+     太さは1種類だけ。太字でもにじんだ偽の太字にしないよう、どの太さにもこの1つを使う
+     読み込むまでは Zen Maru Gothic で出す */
+  @font-face {
+    font-family: "Hanazome";
+    src: url("fonts/HanazomeFont.woff2") format("woff2");
+    font-weight: 100 900;
+    font-display: swap;
+  }
   :root {
     --water: #eef6ff;
     --shallows: #d3e8ff;
     --indigo: #0a3a94;
     --mist: #5b7ba3;
     --wave: #1a80ff;
+    /* はなぞめは仮名の間が広めなので、少し詰めてまとまりを出す */
+    --track: -0.04em;
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -38,8 +50,9 @@
   body {
     min-height: 100vh;
     color: var(--indigo);
-    font-family: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", system-ui, sans-serif;
+    font-family: "Hanazome", "Zen Maru Gothic", "Hiragino Maru Gothic ProN", system-ui, sans-serif;
     font-weight: 400;
+    letter-spacing: var(--track);
     overflow-x: hidden;
   }
   /* 触れる水面。タップしたところに一滴落ちる */
@@ -64,14 +77,14 @@
     font-weight: 700;
     font-size: clamp(30px, 7.4vw, 52px);
     line-height: 1.4;
-    letter-spacing: 0.06em;
+    letter-spacing: var(--track);
   }
   .lead {
     width: min(30em, 100%);
     color: var(--mist);
     font-size: 16px;
     line-height: 2;
-    letter-spacing: 0.04em;
+    letter-spacing: var(--track);
     word-break: auto-phrase;
   }
   dl {
@@ -81,7 +94,7 @@
     max-width: 680px;
     margin-top: 12px;
   }
-  dt { font-weight: 700; font-size: 15px; letter-spacing: 0.06em; margin-bottom: 8px; }
+  dt { font-weight: 700; font-size: 15px; letter-spacing: var(--track); margin-bottom: 8px; }
   dd { color: var(--mist); font-size: 13px; line-height: 1.85; text-wrap: balance; word-break: auto-phrase; }
   /* 紹介の動画。音なしでくり返す */
   .promo {
@@ -92,10 +105,10 @@
   }
   /* 使いどころ:QRがあるところ。4つを2列に並べる */
   .uses { width: min(680px, 100%); display: grid; gap: 18px; margin-top: 8px; }
-  .uses h2 { font-size: 20px; font-weight: 700; letter-spacing: 0.06em; }
+  .uses h2 { font-size: 20px; font-weight: 700; letter-spacing: var(--track); }
   .uses ul { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 32px; text-align: left; }
   .uses li { display: grid; gap: 4px; }
-  .uses b { font-size: 15px; letter-spacing: 0.04em; }
+  .uses b { font-size: 15px; letter-spacing: var(--track); }
   .uses span { color: var(--mist); font-size: 13px; line-height: 1.8; word-break: auto-phrase; text-wrap: balance; }
   @media (max-width: 600px) { .uses ul { grid-template-columns: 1fr; width: min(22em, 100%); margin: 0 auto; } }
   /* 画面:4枚を1列に。狭い画面では横にすべらせて見る
@@ -116,23 +129,13 @@
   }
   .screens figcaption { color: var(--mist); font-size: 13px; }
   @media (max-width: 900px) { main > .screens { justify-content: flex-start; } .screens img { width: 180px; } }
-  .soon { color: var(--mist); font-size: 14px; letter-spacing: 0.04em; }
-  /* 開発を応援するリンク。目立ちすぎないよう、水面に近い色の小さな丸いボタンにする */
-  main > .tip {
-    pointer-events: auto;
-    display: inline-block; padding: 10px 22px; border-radius: 999px;
-    background: var(--shallows); color: var(--wave);
-    font-size: 14px; font-weight: 500; letter-spacing: 0.06em; text-decoration: none;
-    box-shadow: 0 8px 22px rgba(26, 128, 255, 0.14);
-  }
-  .tip:hover { box-shadow: 0 10px 28px rgba(26, 128, 255, 0.24); }
-  .tip:focus-visible { outline: 2px solid var(--wave); outline-offset: 3px; }
+  .soon { color: var(--mist); font-size: 14px; letter-spacing: var(--track); }
   .hint { color: var(--mist); font-size: 12px; opacity: 0.7; }
+  /* Buy Me a Coffee の吹き出し。標準は幅260pxで途中で折り返すので、改行した行の長さに合わせる */
+  body > div[style*="max-width: 260px"] { width: max-content !important; max-width: calc(100vw - 120px) !important; }
   @media (max-width: 600px) {
     dl { grid-template-columns: 1fr; gap: 20px; width: min(22em, 100%); }
   }
-  /* Buy Me a Coffee の吹き出し。標準は幅260pxで途中で折り返すので、改行した行の長さに合わせる */
-  body > div[style*="max-width: 260px"] { width: max-content !important; max-width: calc(100vw - 120px) !important; }
   /* 開いたとき・見えてきたときに、文字がふっと浮かび上がる(紹介動画と同じ動き) */
   .js main > * { opacity: 0; translate: 0 18px; transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), translate 0.9s cubic-bezier(0.16, 1, 0.3, 1); transition-delay: var(--delay, 0s); }
   .js main > .shown { opacity: 1; translate: 0 0; }
@@ -171,7 +174,6 @@
     <p class="hint">水面に触れてみてください</p>
   </main>
   <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="toasha" data-description="Support me on Buy me a coffee!" data-message="使ってくれてありがとうございます！&#10;応援してくれると嬉しいです！" data-color="#FF813F" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
-  </main>
 <script>
 // 水面:落ちた滴ごとの波を「水面の高さ」として足し合わせ、その傾きの明るさで描く(アプリの背景と同じ考え方)
 // 波が重なると、強め合ったり打ち消し合ったりする
