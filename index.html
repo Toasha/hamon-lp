@@ -131,6 +131,18 @@
   @media (max-width: 900px) { main > .screens { justify-content: flex-start; } .screens img { width: 180px; } }
   .soon { color: var(--mist); font-size: 14px; letter-spacing: var(--track); }
   .hint { color: var(--mist); font-size: 12px; opacity: 0.7; }
+  /* 問い合わせ先。本文とは分けて、システムフォントの小さな灰色の文字にする */
+  footer {
+    position: relative;
+    padding: 0 16px 104px; /* 右下の応援ボタンと重ならないよう、その上に置く */
+    text-align: center;
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 12px;
+    letter-spacing: 0;
+    color: var(--mist);
+  }
+  footer a { color: inherit; text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
   /* Buy Me a Coffee の吹き出し。標準は幅260pxで途中で折り返すので、改行した行の長さに合わせる */
   body > div[style*="max-width: 260px"] { width: max-content !important; max-width: calc(100vw - 120px) !important; }
   @media (max-width: 600px) {
@@ -173,6 +185,7 @@
     <p class="soon">iPhone向けに近日公開します</p>
     <p class="hint">水面に触れてみてください</p>
   </main>
+  <footer>お問い合わせ <a href="mailto:support@toasha.me">support@toasha.me</a></footer>
   <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="toasha" data-description="Support me on Buy me a coffee!" data-message="使ってくれてありがとうございます！&#10;応援してくれると嬉しいです！" data-color="#FF813F" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
 <script>
 // 水面:落ちた滴ごとの波を「水面の高さ」として足し合わせ、その傾きの明るさで描く(アプリの背景と同じ考え方)
